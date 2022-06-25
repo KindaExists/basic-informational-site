@@ -1,56 +1,35 @@
 #!/usr/bin/env node
 
 const http = require('http');
-const fs = require('fs');
-const url = require('url');
-// 'node:url' module does not work properly
+const fs = require('fs/promises');
+const url = require('url'); // 'node:url' module does not work properly
 
 const port = process.env.PORT || 3000;
 
+async function injectHtml (res, htmlFilePath) {
+  try {
+    const data = await fs.readFile(htmlFilePath, { encoding: 'utf8'});
+    res.setHeader('Content-Type', 'text/html');
+    res.write(data);
+    res.end();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 const server = http.createServer((req, res) => {
-  const reqUrl = new url.URL(req.url, `http://${req.headers.host}`);
   res.statusCode = 200;
 
+  const reqUrl = new url.URL(req.url, `http://${req.headers.host}`);
+  const path = reqUrl.pathname;
   if (reqUrl.pathname === '/') {
-    fs.readFile('./index.html', { encoding: 'utf8'}, (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      res.setHeader('Content-Type', 'text/html');
-      res.write(data);
-      res.end();
-    });
+    injectHtml(res, './index.html');
   } else if (reqUrl.pathname === '/about') {
-    fs.readFile('./about.html', { encoding: 'utf8'}, (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      res.setHeader('Content-Type', 'text/html');
-      res.write(data);
-      res.end();
-    });
+    injectHtml(res, './about.html');
   } else if (reqUrl.pathname === '/contact') {
-    fs.readFile('./contact-me.html', { encoding: 'utf8'}, (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      res.setHeader('Content-Type', 'text/html');
-      res.write(data);
-      res.end();
-    });
+    injectHtml(res, './contact-me.html');
   } else {
-    fs.readFile('./404.html', { encoding: 'utf8'}, (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      res.setHeader('Content-Type', 'text/html');
-      res.write(data);
-      res.end();
-    });
+    injectHtml(res, './404.html');
   }
 });
 
