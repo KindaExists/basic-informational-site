@@ -2,16 +2,16 @@
 
 const http = require('http');
 const fs = require('fs');
+const url = require('url');
+// 'node:url' module does not work properly
 
 const port = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
-  const url = req.url;
-
+  const reqUrl = new url.URL(req.url, `http://${req.headers.host}`);
   res.statusCode = 200;
 
-  console.log(url);
-  if (url === '/') {
+  if (reqUrl.pathname === '/') {
     fs.readFile('./index.html', { encoding: 'utf8'}, (err, data) => {
       if (err) {
         console.error(err);
@@ -21,7 +21,7 @@ const server = http.createServer((req, res) => {
       res.write(data);
       res.end();
     });
-  } else if (url === '/about') {
+  } else if (reqUrl.pathname === '/about') {
     fs.readFile('./about.html', { encoding: 'utf8'}, (err, data) => {
       if (err) {
         console.error(err);
@@ -31,7 +31,7 @@ const server = http.createServer((req, res) => {
       res.write(data);
       res.end();
     });
-  } else if (url === '/contact') {
+  } else if (reqUrl.pathname === '/contact') {
     fs.readFile('./contact-me.html', { encoding: 'utf8'}, (err, data) => {
       if (err) {
         console.error(err);
