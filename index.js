@@ -17,6 +17,7 @@ const server = http.createServer((req, res) => {
         console.error(err);
         return;
       }
+      res.setHeader('Content-Type', 'text/html');
       res.write(data);
       res.end();
     });
@@ -26,6 +27,7 @@ const server = http.createServer((req, res) => {
         console.error(err);
         return;
       }
+      res.setHeader('Content-Type', 'text/html');
       res.write(data);
       res.end();
     });
@@ -35,6 +37,7 @@ const server = http.createServer((req, res) => {
         console.error(err);
         return;
       }
+      res.setHeader('Content-Type', 'text/html');
       res.write(data);
       res.end();
     });
@@ -44,7 +47,7 @@ const server = http.createServer((req, res) => {
         console.error(err);
         return;
       }
-      console.error('404 page not found');
+      res.setHeader('Content-Type', 'text/html');
       res.write(data);
       res.end();
     });
